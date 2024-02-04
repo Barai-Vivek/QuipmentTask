@@ -1,8 +1,11 @@
 package com.vivek.quipmenttask.ui.activities
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.vivek.quipmenttask.R
@@ -17,7 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TripsActivity : AppCompatActivity() {
 
-    private var _binding : ActivityTripsBinding?= null
+    private var _binding: ActivityTripsBinding? = null
     private val binding get() = _binding!!
 
 
@@ -27,6 +30,18 @@ class TripsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        supportActionBar?.apply {
+            setBackgroundDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        this@TripsActivity,
+                        R.color.blue
+                    )
+                )
+            )
+        }
 
         // Check if savedInstanceState is null to avoid adding fragments multiple times on configuration change
         if (savedInstanceState == null) {

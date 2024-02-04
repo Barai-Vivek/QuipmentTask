@@ -1,11 +1,17 @@
 package com.vivek.quipmenttask.ui.fragment
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -35,8 +41,6 @@ class TripsListFragment : Fragment() {
         } else {
             selectedItems.add(it)
         }
-
-
         if (selectedItems.size > 0) {
             binding.btnNavigate.visibility = View.VISIBLE
         } else {
@@ -62,7 +66,10 @@ class TripsListFragment : Fragment() {
             // Handle the back button press here
             backPressed()
         }
+    }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         readTrips()
     }
 
@@ -90,6 +97,10 @@ class TripsListFragment : Fragment() {
 
         binding.tripsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.tripsRecyclerView.adapter = tripsAdapter
+
+        binding.btnNavigate.setOnClickListener {
+            openList()
+        }
     }
 
     private fun backPressed() {
@@ -115,4 +126,47 @@ class TripsListFragment : Fragment() {
             }
         }
     }
+
+    private fun openList() {
+        val selectedTrips = selectedItems.map { position ->
+            if (position in tripsList.indices) {
+                tripsList[position] // Return the element at the specified position if it exists in the list
+            } else {
+                null
+            }
+        }
+
+        val startAddress = selectedTrips.firstOrNull()?.pickUpAddress
+            ?: "" // Get the starting address entered by the user
+        val destinationAddress =
+            selectedTrips.lastOrNull()?.dropOffAddress
+                ?: "" // Get the destination address entered by the user
+
+        // Create the URI with the starting point and destination address
+        val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")
+
+        // Create an intent with the ACTION_VIEW action and the URI
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+
+        // Set the intent category to BROWSABLE to allow apps to handle the intent
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+        // Get a list of activities that can handle the intent
+        val packageManager = requireContext().packageManager
+        val activities =
+            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+        // Check if there are any activities that can handle the intent
+        if (activities.isNotEmpty()) {
+            // Create a chooser dialog to let the user choose the map application
+            val chooser = Intent.createChooser(intent, "Select Map Application")
+
+            // Start the activity with the chooser
+            startActivity(chooser)
+        } else {
+            // Handle case where no map application is available
+            Toast.makeText(context, "No map application found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

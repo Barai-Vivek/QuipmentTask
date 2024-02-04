@@ -2,6 +2,7 @@ package com.vivek.quipmenttask.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,12 +43,22 @@ class TripDetailFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initializeViews()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        //access view model once this method is called.
         readTrips()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initializeViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val count = tripViewModel.tripCount.value?.plus(1)
+        (activity as TripsActivity).supportActionBar?.title = "Enter Trip $count"
+    }
 
     private fun initializeViews() {
         binding.apply {
