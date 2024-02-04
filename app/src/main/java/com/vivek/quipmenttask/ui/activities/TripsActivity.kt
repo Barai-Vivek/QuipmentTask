@@ -9,6 +9,7 @@ import com.vivek.quipmenttask.R
 import com.vivek.quipmenttask.databinding.ActivityTripsBinding
 import com.vivek.quipmenttask.ui.fragment.TripDetailFragment
 import com.vivek.quipmenttask.ui.fragment.TripsListFragment
+import com.vivek.quipmenttask.util.Constants
 import com.vivek.quipmenttask.viewmodel.TripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,7 +32,7 @@ class TripsActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Add Fragment TripDetailFragment
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, TripDetailFragment(), "TripDetailFragment")
+                .add(R.id.fragmentContainer, TripDetailFragment(), Constants.TRIPS_DETAIL_FRAG)
                 .commit()
         }
     }

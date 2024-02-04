@@ -1,28 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="trip"
             type="com.vivek.quipmenttask.data.model.Trip" />
     </data>
 
-    <RelativeLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="8dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp">
+        android:layout_marginVertical="8dp"
+        app:cardCornerRadius="8dp">
 
-        <TextView
-            android:id="@+id/tvCustomerName"
+        <LinearLayout
+            android:id="@+id/relContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:textColor="@color/black"
-            android:text="@{trip.customerName}"/>
-    </RelativeLayout>
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTrip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+
+
+            <TextView
+                android:id="@+id/tvCustomerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:text="@{String.format(@string/display_customer_name, trip.customerName)}"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/tvPickUpAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:text="@{String.format(@string/display_pickup_address, trip.pickUpAddress)}"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/tvDropOffAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:text="@{String.format(@string/display_dropoff_address, trip.dropOffAddress)}"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/tvPickUpTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/black"
+                />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </layout>

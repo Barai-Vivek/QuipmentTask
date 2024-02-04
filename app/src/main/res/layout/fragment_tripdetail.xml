@@ -124,7 +124,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/barrier_below_buttons"
         app:layout_constraintEnd_toStartOf="@id/guideline"
-        app:layout_constraintWidth_percent="0.4" />
+        app:layout_constraintWidth_percent="0.4"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btnNext"

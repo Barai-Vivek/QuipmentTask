@@ -9,4 +9,12 @@
     <string name="save">Save</string>
     <string name="remove_all">Remove all</string>
     <string name="next">Next</string>
+
+    <string name="display_customer_name">Customer name: %1$s</string>
+    <string name="display_pickup_address">Pickup Address: %1$s</string>
+    <string name="display_dropoff_address">Dropoff Address: %1$s</string>
+    <string name="display_price">Price: %1$s</string>
+    <string name="display_pickup_time">Pickup Time: %1$s</string>
+    <string name="navigate">Navigate</string>
+
 </resources>

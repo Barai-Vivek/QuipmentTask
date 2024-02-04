@@ -25,11 +25,25 @@ class TripsListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val tripsList = mutableListOf<Trip>()
-    private val selectedItems = HashSet<Int>()
+    private var selectedItems = HashSet<Int>()
 
     private val tripViewModel: TripViewModel by activityViewModels()
 
-    private var tripsAdapter: TripsAdapter = TripsAdapter(tripsList, selectedItems)
+    private val changeItemSelection: (Int) -> Unit = {
+        if (selectedItems.contains(it)) {
+            selectedItems.remove(it)
+        } else {
+            selectedItems.add(it)
+        }
+
+
+        if (selectedItems.size > 0) {
+            binding.btnNavigate.visibility = View.VISIBLE
+        } else {
+            binding.btnNavigate.visibility = View.GONE
+        }
+    }
+    private var tripsAdapter = TripsAdapter(tripsList, selectedItems, changeItemSelection)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,11 +88,11 @@ class TripsListFragment : Fragment() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        binding.tripsRecyclerView.layoutManager= LinearLayoutManager(context)
+        binding.tripsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.tripsRecyclerView.adapter = tripsAdapter
     }
 
-    private fun backPressed(){
+    private fun backPressed() {
         (activity as TripsActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as TripsActivity).removeTopFragmentFromBackStack()
     }

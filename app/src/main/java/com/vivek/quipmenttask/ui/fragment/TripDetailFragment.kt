@@ -14,6 +14,8 @@ import androidx.fragment.app.activityViewModels
 import com.vivek.quipmenttask.data.model.Trip
 import com.vivek.quipmenttask.databinding.FragmentTripdetailBinding
 import com.vivek.quipmenttask.ui.activities.TripsActivity
+import com.vivek.quipmenttask.util.Constants
+import com.vivek.quipmenttask.util.formatToString
 import com.vivek.quipmenttask.viewmodel.TripViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +32,7 @@ class TripDetailFragment : Fragment() {
 
     private val tripViewModel: TripViewModel by activityViewModels()
 
-    private val calendar: Calendar = Calendar.getInstance()
+    private var calendar: Calendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,10 +55,9 @@ class TripDetailFragment : Fragment() {
             btnNext.setOnClickListener {
                 (activity as TripsActivity).addFragmentToBackStack(
                     TripsListFragment(),
-                    "TripsListFragment"
+                    Constants.TRIPS_LIST_FRAG
                 )
             }
-
             btnSave.setOnClickListener {
                 save()
             }
@@ -94,6 +95,7 @@ class TripDetailFragment : Fragment() {
 
     private fun clearForm() {
         binding.apply {
+            calendar = Calendar.getInstance()
             edtCustomerName.setText("")
             edtPickupAddress.setText("")
             edtDropOffAddress.setText("")
@@ -157,10 +159,29 @@ class TripDetailFragment : Fragment() {
             tripViewModel.tripCount.observe(viewLifecycleOwner) { trips ->
                 //do action here, and now you have data in list (notes)
                 (activity as TripsActivity).supportActionBar?.title = "Enter Trip ${trips + 1}"
-                if (trips > 1) {
-                    showNextButton()
+                if (trips > 0) {
+                    if (trips > 1) {
+                        showNextButton()
+                    }
+                    handleRemoveAllButton(true)
+                } else {
+                    handleRemoveAllButton(false)
                 }
             }
+        }
+    }
+
+    private fun handleRemoveAllButton(show: Boolean) {
+        binding.apply {
+            if (show) {
+                btnRemoveAll.visibility = View.VISIBLE
+            } else {
+                btnRemoveAll.visibility = View.GONE
+            }
+
+            val params = guideline.layoutParams as ConstraintLayout.LayoutParams
+            params.guidePercent = if (btnNext.visibility == View.VISIBLE) 0.5f else 1f
+            guideline.layoutParams = params
         }
     }
 
@@ -178,6 +199,7 @@ class TripDetailFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             tripViewModel.removeAllTrips().also {
                 //do action here
+                binding.btnNext.visibility = View.GONE
                 Toast.makeText(context, "All trips removed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -228,12 +250,7 @@ class TripDetailFragment : Fragment() {
     }
 
     private fun updateDateTimeEditText() {
-        // Format the selected date and time
-        val dateTimeFormat = "yyyy-MM-dd HH:mm"
-        val dateFormat = SimpleDateFormat(dateTimeFormat, Locale.getDefault())
-        val formattedDateTime = dateFormat.format(calendar.time)
-
         // Update EditText with selected date and time
-        binding.edtTime.setText(formattedDateTime)
+        binding.edtTime.setText(calendar.time.formatToString(Constants.yyyyMMddHHmm))
     }
 }
