@@ -21,6 +21,7 @@ import com.vivek.quipmenttask.viewmodel.TripViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -52,12 +53,6 @@ class TripDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeViews()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val count = tripViewModel.tripCount.value?.plus(1)
-        binding.toolbar.title = "Enter Trip $count"
     }
 
     private fun initializeViews() {
@@ -155,8 +150,9 @@ class TripDetailFragment : Fragment() {
     }
 
     private fun insertTrip(trip: Trip, message: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            tripViewModel.insertTrip(trip).also {
+        CoroutineScope(Dispatchers.IO).launch {
+            tripViewModel.insertTrip(trip)
+            withContext(Dispatchers.Main) {
                 //do action here
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 clearForm()
@@ -211,13 +207,15 @@ class TripDetailFragment : Fragment() {
 
     //Remove all trips
     private fun removeAll() {
-        CoroutineScope(Dispatchers.Main).launch {
-            tripViewModel.removeAllTrips().also {
-                //do action here
+        CoroutineScope(Dispatchers.IO).launch {
+            tripViewModel.removeAllTrips()
+            withContext(Dispatchers.Main) {
+                // Update UI on the main thread
                 binding.btnNext.visibility = View.GONE
                 Toast.makeText(context, "All trips removed", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
 

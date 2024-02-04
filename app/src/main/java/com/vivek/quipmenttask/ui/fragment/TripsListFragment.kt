@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vivek.quipmenttask.R
 import com.vivek.quipmenttask.data.model.Trip
@@ -111,40 +113,92 @@ class TripsListFragment : Fragment() {
     }
 
     private fun openList() {
-        val selectedTrips = selectedItems.map { position ->
-            if (position in tripsList.indices) {
-                tripsList[position] // Return the element at the specified position if it exists in the list
-            } else {
-                null
+        binding.progressBar.visibility = View.VISIBLE
+        // Start a coroutine to perform tasks in the background
+        lifecycleScope.launch(Dispatchers.Default) {
+            // Convert positionsHashSet to a list of positions
+            val positionsList = selectedItems.toList()
+
+            // Filter the tripsList based on the positions in positionsHashSet
+            val filteredList = tripsList.filterIndexed { index, _ -> index in positionsList }
+
+            // Sort the filtered list based on the positions in positionsHashSet
+            val sortedList = filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
+
+            // Generate a URL with address in the background
+            val googleMapUrl =
+                context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsAddressURL(sortedList) }
+
+            // Start the activity in the foreground
+            launch(Dispatchers.Main) {
+                // Create the URI with the Google Maps URL
+                val gmmIntentUri = Uri.parse(googleMapUrl)
+
+                // Create an intent with the ACTION_VIEW action and the URI
+                val intent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+
+                // Set the intent category to BROWSABLE to allow apps to handle the intent
+                intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+                // Get a list of activities that can handle the intent
+                val packageManager = requireContext().packageManager
+                val activities =
+                    packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+                binding.progressBar.visibility = View.GONE
+                // Check if there are any activities that can handle the intent
+                if (activities.isNotEmpty()) {
+                    // Create a chooser dialog to let the user choose the map application
+                    val chooser = Intent.createChooser(intent, "Select Map Application")
+
+                    // Start the activity with the chooser
+                    startActivity(chooser)
+                } else {
+                    // Handle case where no map application is available
+                    Toast.makeText(context, "No map application found", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
 
-        val startAddress = selectedTrips.firstOrNull()?.pickUpAddress
-            ?: "" // Get the starting address entered by the user
-        val destinationAddress =
-            selectedTrips.lastOrNull()?.dropOffAddress
-                ?: "" // Get the destination address entered by the user
 
-//        val latlng = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Jamnagar, gujarat") }
-//        val latlng1 = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Ahmedabad, gujarat") }
+    private fun testList() {
 
+        // Convert positionsHashSet to a list of positions
+        val positionsList = selectedItems.toList()
+
+        // Filter the tripsList based on the positions in positionsHashSet
+        val filteredList = tripsList.filterIndexed { index, _ -> index in positionsList }
+
+        // Sort the filtered list based on the positions in positionsHashSet
+        val sortedList = filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
+
+        //generate a url with lat lng
+        /*val googleMapUrl =
+            context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsLatLngURL(sortedList) }*/
+
+        //generate a url with address
+        //val example = "https://www.google.com/maps/dir/Jamnagar/Ahmedabad/Rajkot/Surat"
+        val googleMapUrl =
+            context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsAddressURL(sortedList) }
+
+        //get lat lng for address
+        //val latlng = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Jamnagar, gujarat") }
+        //val latlng1 = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Ahmedabad, gujarat") }
         //println("lat lng ${latlng1?.first} & ${latlng1?.second}")
 
         // Create the URI with the starting point and destination address
-//        val lat = 30.2115
-//        val lng = 76.2551
-//
-//        val lat1 = 28.5040
-//        val lng1= 72.5323
-//        val label= "check"
-        val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")
+        //val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")  //Work only in google but shows all installed maps
         //val uri = Uri.parse("geo:${lat},${lng}")
-//        val uri =
-//            Uri.parse(
-//                "geo:${latlng?.first},${latlng?.second}?q=" + Uri.encode("${latlng1?.first},${lng1} (${latlng1?.second})"))
+        //val uri =
+        //Uri.parse(
+            //"geo:${latlng?.first},${latlng?.second}?q=" + Uri.encode("${latlng1?.first},${lng1} (${latlng1?.second})"))
+
+        val gmmIntentUri =
+            Uri.parse(googleMapUrl)
 
         // Create an intent with the ACTION_VIEW action and the URI
-        val intent = Intent(Intent.ACTION_VIEW, uri)
+        val intent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
 
         // Set the intent category to BROWSABLE to allow apps to handle the intent
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
