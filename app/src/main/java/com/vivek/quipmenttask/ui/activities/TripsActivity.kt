@@ -31,13 +31,7 @@ class TripsActivity : AppCompatActivity() {
         _binding = ActivityTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Check if savedInstanceState is null to avoid adding fragments multiple times on configuration change
-        if (savedInstanceState == null) {
-            // Add Fragment TripDetailFragment
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, TripDetailFragment(), Constants.TRIPS_DETAIL_FRAG)
-                .commit()
-        }
+        addFragmentToBackStack(TripDetailFragment(), Constants.TRIPS_DETAIL_FRAG)
     }
 
     override fun onDestroy() {
@@ -48,7 +42,7 @@ class TripsActivity : AppCompatActivity() {
     // Method to addFragmentToBackStack Fragment Trip detail with Fragment Trip List
     fun addFragmentToBackStack(fragment: Fragment, tag: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment, tag)
+            .add(R.id.fragmentContainer, fragment, tag)
             .addToBackStack(tag)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .commit()

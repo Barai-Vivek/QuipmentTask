@@ -58,7 +58,6 @@ class TripDetailFragment : Fragment() {
         super.onResume()
         val count = tripViewModel.tripCount.value?.plus(1)
         binding.toolbar.title = "Enter Trip $count"
-        handleNextAndRemoveBtnVisibility(count ?: 0)
     }
 
     private fun initializeViews() {

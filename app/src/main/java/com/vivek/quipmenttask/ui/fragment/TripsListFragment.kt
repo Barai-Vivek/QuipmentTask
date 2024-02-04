@@ -2,13 +2,10 @@ package com.vivek.quipmenttask.ui.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -21,6 +18,7 @@ import com.vivek.quipmenttask.data.model.Trip
 import com.vivek.quipmenttask.databinding.FragmentTripsListBinding
 import com.vivek.quipmenttask.ui.activities.TripsActivity
 import com.vivek.quipmenttask.ui.adapters.TripsAdapter
+import com.vivek.quipmenttask.util.GeoCoderHelper
 import com.vivek.quipmenttask.viewmodel.TripViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -127,8 +125,23 @@ class TripsListFragment : Fragment() {
             selectedTrips.lastOrNull()?.dropOffAddress
                 ?: "" // Get the destination address entered by the user
 
+//        val latlng = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Jamnagar, gujarat") }
+//        val latlng1 = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Ahmedabad, gujarat") }
+
+        //println("lat lng ${latlng1?.first} & ${latlng1?.second}")
+
         // Create the URI with the starting point and destination address
+//        val lat = 30.2115
+//        val lng = 76.2551
+//
+//        val lat1 = 28.5040
+//        val lng1= 72.5323
+//        val label= "check"
         val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")
+        //val uri = Uri.parse("geo:${lat},${lng}")
+//        val uri =
+//            Uri.parse(
+//                "geo:${latlng?.first},${latlng?.second}?q=" + Uri.encode("${latlng1?.first},${lng1} (${latlng1?.second})"))
 
         // Create an intent with the ACTION_VIEW action and the URI
         val intent = Intent(Intent.ACTION_VIEW, uri)
