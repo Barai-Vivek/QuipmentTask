@@ -1,11 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.QuipmentTask" parent="Theme.Material3.Light">
+    <style name="Base.Theme.QuipmentTask" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/blue</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:tint">@color/white</item>
     </style>
 
     <style name="Theme.QuipmentTask" parent="Base.Theme.QuipmentTask" />

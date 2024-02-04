@@ -57,7 +57,8 @@ class TripDetailFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val count = tripViewModel.tripCount.value?.plus(1)
-        (activity as TripsActivity).supportActionBar?.title = "Enter Trip $count"
+        binding.toolbar.title = "Enter Trip $count"
+        handleNextAndRemoveBtnVisibility(count ?: 0)
     }
 
     private fun initializeViews() {
@@ -169,16 +170,20 @@ class TripDetailFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             tripViewModel.tripCount.observe(viewLifecycleOwner) { trips ->
                 //do action here, and now you have data in list (notes)
-                (activity as TripsActivity).supportActionBar?.title = "Enter Trip ${trips + 1}"
-                if (trips > 0) {
-                    if (trips > 1) {
-                        showNextButton()
-                    }
-                    handleRemoveAllButton(true)
-                } else {
-                    handleRemoveAllButton(false)
-                }
+                binding.toolbar.title = "Enter Trip ${trips + 1}"
+                handleNextAndRemoveBtnVisibility(trips)
             }
+        }
+    }
+
+    private fun handleNextAndRemoveBtnVisibility(trips: Int) {
+        if (trips > 0) {
+            if (trips > 1) {
+                showNextButton()
+            }
+            handleRemoveAllButton(true)
+        } else {
+            handleRemoveAllButton(false)
         }
     }
 

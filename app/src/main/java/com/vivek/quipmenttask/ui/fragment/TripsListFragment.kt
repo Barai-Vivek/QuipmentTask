@@ -16,6 +16,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vivek.quipmenttask.R
 import com.vivek.quipmenttask.data.model.Trip
 import com.vivek.quipmenttask.databinding.FragmentTripsListBinding
 import com.vivek.quipmenttask.ui.activities.TripsActivity
@@ -73,26 +74,11 @@ class TripsListFragment : Fragment() {
         readTrips()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                Log.i("CHeck ", "click")
-                // Handle back button click from the support action bar
-                backPressed()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initializeView() {
-        setHasOptionsMenu(true)
-        val actionBar = (activity as TripsActivity).supportActionBar
-        actionBar?.apply {
-            title = "Trips list"
-            setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.title = "Trips list"
+        binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+        binding.toolbar.setNavigationOnClickListener {
+            backPressed()
         }
 
         binding.tripsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -104,7 +90,6 @@ class TripsListFragment : Fragment() {
     }
 
     private fun backPressed() {
-        (activity as TripsActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as TripsActivity).removeTopFragmentFromBackStack()
     }
 

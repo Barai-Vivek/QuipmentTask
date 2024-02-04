@@ -31,18 +31,6 @@ class TripsActivity : AppCompatActivity() {
         _binding = ActivityTripsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        supportActionBar?.apply {
-            setBackgroundDrawable(
-                ColorDrawable(
-                    ContextCompat.getColor(
-                        this@TripsActivity,
-                        R.color.blue
-                    )
-                )
-            )
-        }
-
         // Check if savedInstanceState is null to avoid adding fragments multiple times on configuration change
         if (savedInstanceState == null) {
             // Add Fragment TripDetailFragment
@@ -54,6 +42,7 @@ class TripsActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        _binding = null
     }
 
     // Method to addFragmentToBackStack Fragment Trip detail with Fragment Trip List
