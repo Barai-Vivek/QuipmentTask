@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">QuipmentTask</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="pickup_address">Pickup Address</string>
+    <string name="dropoff_address">Dropoff Address</string>
+    <string name="price">Price</string>
+    <string name="pickup_time">Pickup Time</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
+    <string name="remove_all">Remove all</string>
+    <string name="next">Next</string>
+</resources>
