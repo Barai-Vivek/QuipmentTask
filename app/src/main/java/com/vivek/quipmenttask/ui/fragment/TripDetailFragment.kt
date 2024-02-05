@@ -173,7 +173,7 @@ class TripDetailFragment : Fragment() {
 
     private fun handleNextAndRemoveBtnVisibility(trips: Int) {
         if (trips > 0) {
-            if (trips > 1) {
+            if (trips > 4) {
                 showNextButton()
             }
             handleRemoveAllButton(true)
