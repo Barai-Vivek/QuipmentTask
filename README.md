@@ -1,5 +1,10 @@
 # Trip Navigation App - Draw Trip Navigation Route
 
+## Screen shots
+<img src='screenshots/screen1.png' width='300'> <img src='screenshots/screen2.png' width='300'>
+<img src='screenshots/screen3.png' width='300'> <img src='screenshots/screen4.png' width='300'>
+
+
 ## Purpose
 This demo app is designed to draw the navigation route for one or multiple trips stored in the local database.
 
