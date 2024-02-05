@@ -15,14 +15,14 @@ class GeoCoderHelper(private val context: Context) {
         var latLng: Pair<Double, Double>? = null
         try {
             var addresses: MutableList<Address> = mutableListOf()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                geocoder.getFromLocationName(addressStr, 1) {
-                   addresses.addAll(it)
-                }
-            } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //This code doesn't work sometimes
+//                geocoder.getFromLocationName(addressStr, 1) {
+//                   addresses.addAll(it)
+//                }
+//            } else {
                 @Suppress("DEPRECATION")
                 addresses = geocoder.getFromLocationName(addressStr, 1)?: mutableListOf()
-            }
+            //}
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
                 latLng = Pair(address.latitude, address.longitude)
@@ -102,15 +102,6 @@ class GeoCoderHelper(private val context: Context) {
         val waypoints = addressObjects.subList(1, addressObjects.size)
 
         if (addressObjects.size == 1) {
-            val sourceLatLng =
-                startAddress?.let { GeoCoderHelper(context).getLatLngFromAddress(it) }
-            val destinationLatLng =
-                destinationAddress?.let { GeoCoderHelper(context).getLatLngFromAddress(it) }
-
-            if (sourceLatLng == null || destinationLatLng == null) {
-                return ""
-            }
-
             return "$baseURL$startAddress/$destinationAddress"
         }
 

@@ -57,7 +57,7 @@ class TripDetailFragment : Fragment() {
 
     private fun initializeViews() {
         binding.apply {
-            //Replace Fragment Trip Detail with Fragment Trips List when a button is clicked
+            //Add Fragment Trips List when a button is clicked
             btnNext.setOnClickListener {
                 (activity as TripsActivity).addFragmentToBackStack(
                     TripsListFragment(),

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import com.vivek.quipmenttask.data.model.Trip
 import com.vivek.quipmenttask.databinding.FragmentTripsListBinding
 import com.vivek.quipmenttask.ui.activities.TripsActivity
 import com.vivek.quipmenttask.ui.adapters.TripsAdapter
+import com.vivek.quipmenttask.util.Constants
 import com.vivek.quipmenttask.util.GeoCoderHelper
 import com.vivek.quipmenttask.viewmodel.TripViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -85,7 +85,8 @@ class TripsListFragment : Fragment() {
         binding.tripsRecyclerView.adapter = tripsAdapter
 
         binding.btnNavigate.setOnClickListener {
-            openList()
+            openMapsBottomSheet()
+            //openSystemBottomSheetList()
         }
     }
 
@@ -112,7 +113,7 @@ class TripsListFragment : Fragment() {
         }
     }
 
-    private fun openList() {
+    private fun openMapsBottomSheet() {
         binding.progressBar.visibility = View.VISIBLE
         // Start a coroutine to perform tasks in the background
         lifecycleScope.launch(Dispatchers.Default) {
@@ -123,7 +124,8 @@ class TripsListFragment : Fragment() {
             val filteredList = tripsList.filterIndexed { index, _ -> index in positionsList }
 
             // Sort the filtered list based on the positions in positionsHashSet
-            val sortedList = filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
+            val sortedList =
+                filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
 
             // Generate a URL with address in the background
             val googleMapUrl =
@@ -131,8 +133,59 @@ class TripsListFragment : Fragment() {
 
             // Start the activity in the foreground
             launch(Dispatchers.Main) {
+                binding.progressBar.visibility = View.GONE
                 // Create the URI with the Google Maps URL
-                val gmmIntentUri = Uri.parse(googleMapUrl)
+                val appsListBottomSheetFragment = AppsListBottomSheetFragment()
+                val bundle = Bundle()
+                bundle.putString("mapUrl", googleMapUrl) // Example: pass a string
+                appsListBottomSheetFragment.arguments = bundle
+                appsListBottomSheetFragment.show(parentFragmentManager, Constants.APPS_LIST_FRAG)
+
+            }
+        }
+    }
+
+
+    /*Testing code with different work around */
+    private fun openSystemBottomSheetList() {
+        binding.progressBar.visibility = View.VISIBLE
+        // Start a coroutine to perform tasks in the background
+        lifecycleScope.launch(Dispatchers.Default) {
+            // Convert positionsHashSet to a list of positions
+            val positionsList = selectedItems.toList()
+
+            // Filter the tripsList based on the positions in positionsHashSet
+            val filteredList = tripsList.filterIndexed { index, _ -> index in positionsList }
+
+            // Sort the filtered list based on the positions in positionsHashSet
+            val sortedList =
+                filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
+
+            //generate a url with lat lng
+            /*val googleMapUrl =
+            context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsLatLngURL(sortedList) }*/
+
+            //generate a url with address
+            //val example = "https://www.google.com/maps/dir/Jamnagar/Ahmedabad/Rajkot/Surat"
+            val googleMapUrl =
+                context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsAddressURL(sortedList) }
+
+            //get lat lng for address
+            //val latlng = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Jamnagar, gujarat") }
+            //val latlng1 = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Ahmedabad, gujarat") }
+            //println("lat lng ${latlng1?.first} & ${latlng1?.second}")
+
+            // Create the URI with the starting point and destination address
+            //val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")  //Work only in google but shows all installed maps
+            //val uri = Uri.parse("geo:${lat},${lng}")
+            //val uri =
+            //Uri.parse(
+            //"geo:${latlng?.first},${latlng?.second}?q=" + Uri.encode("${latlng1?.first},${lng1} (${latlng1?.second})"))
+
+            // Start the activity in the foreground
+            launch(Dispatchers.Main) {
+                val gmmIntentUri =
+                    Uri.parse(googleMapUrl)
 
                 // Create an intent with the ACTION_VIEW action and the URI
                 val intent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -158,66 +211,6 @@ class TripsListFragment : Fragment() {
                     Toast.makeText(context, "No map application found", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-    }
-
-
-    private fun testList() {
-
-        // Convert positionsHashSet to a list of positions
-        val positionsList = selectedItems.toList()
-
-        // Filter the tripsList based on the positions in positionsHashSet
-        val filteredList = tripsList.filterIndexed { index, _ -> index in positionsList }
-
-        // Sort the filtered list based on the positions in positionsHashSet
-        val sortedList = filteredList.sortedBy { trip -> positionsList.indexOf(tripsList.indexOf(trip)) }
-
-        //generate a url with lat lng
-        /*val googleMapUrl =
-            context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsLatLngURL(sortedList) }*/
-
-        //generate a url with address
-        //val example = "https://www.google.com/maps/dir/Jamnagar/Ahmedabad/Rajkot/Surat"
-        val googleMapUrl =
-            context?.let { GeoCoderHelper(it).generateGoogleMapsDirectionsAddressURL(sortedList) }
-
-        //get lat lng for address
-        //val latlng = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Jamnagar, gujarat") }
-        //val latlng1 = context?.let { GeoCoderHelper(it).getLatLngFromAddress("Ahmedabad, gujarat") }
-        //println("lat lng ${latlng1?.first} & ${latlng1?.second}")
-
-        // Create the URI with the starting point and destination address
-        //val uri = Uri.parse("geo:0,0?q=$startAddress,$destinationAddress")  //Work only in google but shows all installed maps
-        //val uri = Uri.parse("geo:${lat},${lng}")
-        //val uri =
-        //Uri.parse(
-            //"geo:${latlng?.first},${latlng?.second}?q=" + Uri.encode("${latlng1?.first},${lng1} (${latlng1?.second})"))
-
-        val gmmIntentUri =
-            Uri.parse(googleMapUrl)
-
-        // Create an intent with the ACTION_VIEW action and the URI
-        val intent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
-        // Set the intent category to BROWSABLE to allow apps to handle the intent
-        intent.addCategory(Intent.CATEGORY_BROWSABLE)
-
-        // Get a list of activities that can handle the intent
-        val packageManager = requireContext().packageManager
-        val activities =
-            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-
-        // Check if there are any activities that can handle the intent
-        if (activities.isNotEmpty()) {
-            // Create a chooser dialog to let the user choose the map application
-            val chooser = Intent.createChooser(intent, "Select Map Application")
-
-            // Start the activity with the chooser
-            startActivity(chooser)
-        } else {
-            // Handle case where no map application is available
-            Toast.makeText(context, "No map application found", Toast.LENGTH_SHORT).show()
         }
     }
 
