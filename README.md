@@ -56,6 +56,7 @@ app/
 |   |   |   |   |   |-- DBModule.kt
 |   |   |   |-- repository/
 |   |   |   |   |-- TripRepository.kt
+|   |   |   |-- ui/
 |   |   |   |   |-- activities/
 |   |   |   |   |   |-- TripsActivity.kt
 |   |   |   |   |-- adapters/
