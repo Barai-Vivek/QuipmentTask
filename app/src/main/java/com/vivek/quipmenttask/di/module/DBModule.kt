@@ -27,11 +27,4 @@ class DBModule {
     @Singleton
     fun providesTripDao(tripDatabase: TripDatabase) = tripDatabase.getTripDao()
 
-
-    @Provides
-    @Singleton
-    fun providesTripRepository(tripDao: TripDao) = TripRepository(tripDao)
-
-    @Provides
-    fun providesTripViewModel(tripRepository: TripRepository) = TripViewModel(tripRepository)
 }
